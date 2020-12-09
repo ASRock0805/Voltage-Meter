@@ -33,20 +33,6 @@ void setup(void);
 void loop(void);
 void getVolt(byte );
 
-/*--- Functions Definition ---*/
-// Implementation of Analog Voltage Reading
-void getVolt(byte signalPin) {
-  for (unsigned int i = 0; i < N; ++i) {    // Get samples for smooth the value
-    vOut = vOut + analogRead(signalPin);
-    delay(1);                               // delay in between reads for stability
-  }
-  vOut = (vOut * vConv) / N;                // ADC of voltage meter output voltage
-
-  if (isinf(vOut) || isnan(vOut)) {
-    vOut = -1;
-  }
-}
-
 /*--- Initialization ---*/
 void setup(void) {
   Serial.begin(baudSpeed);  // Initializes serial port
@@ -74,5 +60,19 @@ void loop(void) {
     startTime = currentTime;  // Save the start time of the current state
   } else {
     return;
+  }
+}
+
+/*--- Functions Definition ---*/
+// Implementation of Analog Voltage Reading
+void getVolt(byte signalPin) {
+  for (unsigned int i = 0; i < N; ++i) {    // Get samples for smooth the value
+    vOut = vOut + analogRead(signalPin);
+    delay(1);                               // delay in between reads for stability
+  }
+  vOut = (vOut * vConv) / N;                // ADC of voltage meter output voltage
+
+  if (isinf(vOut) || isnan(vOut)) {
+    vOut = -1;
   }
 }
