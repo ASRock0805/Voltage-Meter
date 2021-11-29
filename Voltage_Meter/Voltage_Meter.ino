@@ -40,7 +40,7 @@ void setup(void) {
   startTime = millis();     // Initial start time
 
   // Voltage Meter Initialization
-  vOut = 0.0;
+  vOut = 0.0f;
 }
 
 /*--- Measurement ---*/
