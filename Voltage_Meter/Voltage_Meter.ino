@@ -66,11 +66,11 @@ void loop(void) {
 /*--- Functions Definition ---*/
 // Implementation of Analog Voltage Reading
 void getVolt(byte signalPin) {
-  for (unsigned int i = 0UL; i < N; ++i) {    // Get samples for smooth the value
+  for (unsigned int i = 0UL; i < N; ++i) {      // Get samples for smooth the value
     vOut = vOut + analogRead(signalPin);
-    delay(1);                                 // delay in between reads for stability
+    delay(1UL);                                 // delay in between reads for stability
   }
-  vOut = (vOut * vConv) / N;                  // ADC of voltage meter output voltage
+  vOut = (vOut * vConv) / N;                    // ADC of voltage meter output voltage
 
   if (isinf(vOut) || isnan(vOut)) {
     vOut = -1;
