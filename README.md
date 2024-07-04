@@ -1,6 +1,6 @@
 # Voltage Meter
 
-This is a project that implements a simple voltage meter using the Arduino. The sensor's output voltage is converted by the ADC (Analog to Digital Converter) and displayed via the serial monitor.
+This is a project that implements a simple voltage meter using Arduino. The sensor's output voltage is converted by the ADC (Analog to Digital Converter) and displayed via the serial monitor.
 
 ## Table of Contents
 
@@ -56,7 +56,82 @@ This project demonstrates how to read an analog voltage using an Arduino and dis
 ```cpp
 #define sigPin A0 // Voltage meter signal pin w/ ADC
 #define N 800     // Measurement sampling number for smoothing
+```
+- Defines the signal pin and the number of samples for smoothing.
+### Constants
 
-Defines the signal pin and the number of samples for smoothing.
+```cpp
+const unsigned long baudSpeed = 115200UL;
+const unsigned long period = 1000UL;
+const float vIn = 5.0f;
+const byte resBits = 10;
+const float vConv = vIn / (pow(2.0, resBits) - 1.0f);
+```
+- Sets the baud rate for serial communication, the measurement period, and the voltage conversion constant.
 
-Constants
+### Initialization
+
+```cpp
+void setup(void) {
+  Serial.begin(baudSpeed);
+  pinMode(sigPin, INPUT);
+  startTime = millis();
+  measuredVoltage = 0.0f;
+}
+```
+- Initializes the serial port and sets the signal pin as input.
+
+### Measurement Loop
+
+```cpp
+void loop(void) {
+  currentTime = millis();
+  
+  if ((currentTime - startTime) >= period) {
+    getVolt(sigPin);
+
+    Serial.print("Voltage: ");
+    Serial.print(measuredVoltage, 4);
+    Serial.println(" V");
+
+    startTime = currentTime;
+  } else {
+    return;
+  }
+}
+```
+- Measures and prints the voltage every second.
+
+### Analog Voltage Reading
+
+```cpp
+void getVolt(byte signalPin) {
+  measuredVoltage = 0;
+  for (unsigned int i = 0U; i < N; ++i) {
+    measuredVoltage += analogRead(signalPin);
+    delay(1UL);
+  }
+  measuredVoltage = (measuredVoltage * vConv) / N;
+
+  if (isinf(measuredVoltage) || isnan(measuredVoltage)) {
+    measuredVoltage = -1;
+  }
+}
+```
+- Reads the analog voltage multiple times and averages the result.
+
+### Usage
+
+1. **Connect the Arduino to your computer:**
+   - Open the serial monitor from the Arduino IDE.
+   - Set the baud rate to `115200`.
+2. **Observe the voltage readings:**
+   - The measured voltage will be printed every second on the serial monitor.
+
+### License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+### References
+
+- [Voltmeter - Wikipedia](https://en.wikipedia.org/wiki/Voltmeter)
